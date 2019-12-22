@@ -1,0 +1,116 @@
+.text
+.globl main
+
+
+main:
+
+
+li $t9,0 #telos=0
+run:
+bgtz $t9,exitall 	#an telos=1 termatismos
+jal printchoices	#ektypvsh mhnymatos epilogon
+jal readinput		#diavasma input
+move $t8,$v0		#apothikeysi oti diavase se $t8(choice)
+
+condition1:
+li $t7,1
+bne $t8, $t7,condition2  #an choice==1
+jal readinput
+move $t6,$v0		#diavasma kleidiou kai apothikeysi sthn $t6
+blez $t6,printmsg1
+
+
+
+condition2:
+li $t7,2
+bne $t8,$t7, condition3
+
+condition3:
+li $t7,3
+bne $t8, $t7,condition4
+
+condition4:
+li $t9,1 #telos=1
+
+j run
+
+
+
+
+exitall:
+
+li $v0,10
+syscall
+
+
+
+
+printchoices:
+
+la $a0,menu
+li $v0,4
+syscall
+
+la $a0,emptyline
+li $v0,4
+syscall
+
+la $a0,insertkeymsg
+li $v0,4
+syscall
+
+la $a0,emptyline
+li $v0,4
+syscall
+
+la $a0,findkey
+li $v0,4
+syscall
+
+la $a0,emptyline
+li $v0,4
+syscall
+
+la $a0,displayhash
+li $v0,4
+syscall
+
+la $a0,emptyline
+li $v0,4
+syscall
+
+la $a0,exitmsg
+li $v0,4
+syscall
+
+la $a0,emptyline
+li $v0,4
+syscall
+
+jr $ra
+
+
+readinput:
+la $a0,choicemsg
+li $v0,4
+syscall
+
+li $v0,5 
+syscall
+jr $ra
+
+
+.data
+N: .word 10
+keys: .word 0
+telos: .word 0
+hash: .word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+menu: .asciiz "Menu"
+emptyline: .asciiz "\n"
+insertkeymsg: .asciiz "1. Insert key"
+findkey: .asciiz "2.Find key"
+displayhash: .asciiz "3. DIsplay hash table"
+exitmsg: .asciiz "4. exit"
+choicemsg: .asciiz "\nChoice???"
+
+

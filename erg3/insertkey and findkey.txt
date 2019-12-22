@@ -1,0 +1,90 @@
+.text
+
+.globl main
+
+main:
+la $a0, hash #pass hash adress
+li $a1,9   #estv k=2
+
+
+
+jal findkey
+move $t1,$v0   #find key returns either position or -1
+
+move $t8,$t1		#ektypvnv to noumero p vrhka oti yparxei sto hash
+mul $t8,$t8,4
+add $t8,$t5,$t8
+lw $t6,($t8)
+
+move $a0,$t6
+li $v0,1
+syscall
+
+#to $t1 exei to position
+li $t9,-1
+bne $t1,$t9 ,keyInHashtableMsg	#if position<>-1 print msg 
+bgt $hashTableFullmsg 			#keys<N
+
+!!!!!!!!!!!!!!!!!!!!!!!
+
+
+KeyInHashTableMsg:	
+la $a0,keyinhashtablemsg
+li $v0,4
+syscall
+
+li $v0,10
+syscall
+
+
+findkey:
+move $t3,$a1	#$t3=k
+li $t4, 10 	#estv N=10
+li $t0,0	#i=0
+li $t1,0	#found=0
+rem $t2,$t3,$t4		#$t2=position  =k%N (remainder of division)
+#while 
+
+	while:
+	bge $t0,$t4,exitfound	#i<N
+	bnez $t1,exitfound	#found==0
+
+
+		addi $t0, $t0,1		#i++
+		move $t5,$a0		#to $t5 exei hash address kai to diathrv stathero
+		move $t8,$t2		
+		mul $t8, $t8,4	#to hash exei words ara prepei na kinhsoyme kata 4 ton deikth
+		add $t8,$t5,$t8		#hash[position] address
+		lw $t6, ($t8)		#hash[position]
+
+
+			bne $t6,$t3,elseinwhile		#if hash[position]==k
+			li $t1,1		#found=1
+			j while			#phgaine sto while
+
+
+			elseinwhile:
+			addi $t2,$t2,1		#position ++
+			rem $t2,$t2,$t4		#position %=N
+			j while
+
+exitfound:
+li $t7,1
+bne $t1,$t7,exitnotfound
+move $v0,$t2
+jr $ra
+exitnotfound:
+li $v0,-1
+jr $ra
+
+
+
+
+
+
+
+
+.data
+hash: .word 5, 2, 0, 3, 2, 6, 0, 0, 9, 4
+keyinhashtablemsg: .asciiz "Key is already in hash table.\n"
+hashTableFullMsg: .asciiz "tha hash table is full \n"

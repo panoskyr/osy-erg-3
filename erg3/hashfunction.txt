@@ -1,0 +1,43 @@
+.text
+
+.globl main
+
+main:
+la $a0, hash
+li $a1, 4 		#estv k=2
+
+jal hashfunction
+move $t7, $v0
+move $a0, $t7
+li $v0,1
+syscall
+
+li $v0,10
+syscall
+
+hashfunction:
+move $t5, $a0		#hash adress
+move $t1,$a1		#$t1=key
+li $t3,5		#to $t3 exei to N=5 edv.tha prepei na sbhstei mesa sto kyrio 
+			#afou exoume hdh to N apothikevmeno
+rem $t2,$t1,$t3		#$t2 =position prepei na mhn to allazv
+whileofhashfunction:
+
+#finds the hash position
+
+mul $t6, $t2, 4
+add $t6, $t5, $t6
+lw $t4,($t6)  		#t4=hash[position]
+
+li $t9,0
+beq $t4,$t9,returnposition
+add  $t2,$t2,1			#position++
+rem $t2, $t2,$t3		#POSITION %=N
+j whileofhashfunction
+
+returnposition:
+move $v0,$t2
+jr $ra
+
+.data
+hash: .word 2, 3, 1, 0, 5
